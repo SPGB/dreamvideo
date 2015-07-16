@@ -1,20 +1,28 @@
-A docker image for the Google Deepdream visualization:
+#Description
+A docker image for adding the popular "Deep Dream" effect to videos using Google's code.
 
-[http://googleresearch.blogspot.ch/2015/07/deepdream-code-example-for-visualizing.html](http://googleresearch.blogspot.ch/2015/07/deepdream-code-example-for-visualizing.html)
-
-# Usage
-
-```
-docker run --rm -v `pwd`/images:/images mjibson/deepdream URL [LAYER] [ITERATIONS] [OCTAVES] [SCALE]
-```
-
-1. Mount an `/images` volume to hold the results.
-1. Pass a URL that points to a JPG.
-1. Optionally pass a layer to use. Defaults to `inception_4c/output`. See the [ipython notebook](https://github.com/google/deepdream/blob/master/dream.ipynb) for more.
-1. Optionally pass the number of iterations and octaves, and the scale. Defaults to 10, 4, and 1.4, respectively. See the ipython notebook for details.
-
-## Example:
+#Usage
+###General
 
 ```
-docker run --rm -v `pwd`/images:/images mjibson/deepdream 'https://www.google.com/logos/2013/zamboni-1005006-hp.jpg' 'inception_3b/5x5_reduce'
+docker --rm -it -v `pwd`/images:/images -v [path to video file]:/ddd/video.mp4 natelehman/dreamvideo [desired objective]
 ```
+###Example
+
+```
+docker --rm -it -v `pwd`/images:/images -v `pwd`/cut.mp4:/ddd/video.mp4 natelehman/dreamvideo 'conv2/3x3_reduce'
+```
+
+
+An `images` directory will be created in the directory that you run the command. Once the command finishes running (could take a while) it will contain all of the frames (converted and not converted) as well as the output video file.
+###Note
+If you run the command with an images directory already created in your current directory it will *fuck your shit*. It shouldn't be destructive, but the command just won't work as intended.
+
+
+
+
+I stole a bunch of code from these places:
+
+[https://github.com/mjibson/ddd]
+
+[https://github.com/graphific/DeepDreamVideo]
