@@ -35,6 +35,7 @@ RUN apt-get clean && apt-get update && apt-get install -y \
 	python-scipy \
 	python-skimage-lib \
 	python-yaml \
+        libav-tools \
 	--no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -48,7 +49,7 @@ RUN curl http://dl.caffe.berkeleyvision.org/bvlc_googlenet.caffemodel > /root/ca
 
 RUN cd /root/caffe && \
 	cp Makefile.config.example Makefile.config && \
-	sed -i 's/# CPU_ONLY/CPU_ONLY/g' Makefile.config && \
+        sed -i 's/# CPU_ONLY/CPU_ONLY/g' Makefile.config && \
 	echo 'INCLUDE_DIRS += /usr/include/hdf5/serial' >> Makefile.config && \
 	echo 'LIBRARY_DIRS += /usr/lib/x86_64-linux-gnu/hdf5/serial' >> Makefile.config && \
 	make -j"$(nproc)" all pycaffe
@@ -58,5 +59,10 @@ WORKDIR /ddd
 
 COPY start.sh /ddd/
 COPY deepdreams.py /ddd/
+COPY frames2movie.sh /ddd/
+
+RUN mkdir /images
+
+VOLUME /images
 
 ENTRYPOINT ["/ddd/start.sh"]

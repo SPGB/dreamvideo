@@ -1,16 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 # http://stackoverflow.com/a/26028597/864236
-ln /dev/null /dev/raw1394
 
-if [ -z "$1" ]
-then
-	echo must specify image URL
-	exit 1
-fi
+FFMPEG=$(which avconv)
 
-curl $1 > /ddd/img.jpg
 
-ipython /ddd/deepdreams.py $2 $3 $4 $5
+${FFMPEG} -i /ddd/video.mp4 -f image2 /images/%08d.png
+
+ipython /ddd/deepdreams.py $1 /images/*
+
+bash /ddd/frames2movie.sh avconv '/images' video.mp4 'png'
+
+mv images_done.mp4 /images/

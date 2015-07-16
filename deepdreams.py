@@ -1,12 +1,16 @@
 #from cStringIO import StringIO
 import numpy as np
 import scipy.ndimage as nd
-import sys
+import sys, os
 import PIL.Image
 from IPython.display import clear_output, Image, display
 from google.protobuf import text_format
 
 import caffe
+# change O to the identifier of the GPU you want ot use
+# this number can be found with nvidia-smi
+# caffe.set_device(O)
+# caffe.set_mode_gpu()
 
 def showarray(a, title, fmt='png'):
 	a = np.uint8(np.clip(a, 0, 255))
@@ -59,7 +63,7 @@ def make_step(net, step_size=1.5, end='inception_4c/output', jitter=32, clip=Tru
 		bias = net.transformer.mean['data']
 		src.data[:] = np.clip(src.data, -bias, 255-bias)
 
-def deepdream(net, base_img, end, iter_n=10, octave_n=4, octave_scale=1.4, clip=True, **step_params):
+def deepdream(net, base_img, end, iter_n=4, octave_n=4, octave_scale=1.7, clip=True, **step_params):
 	# prepare base images for all octaves
 	octaves = [preprocess(net, base_img)]
 	for i in xrange(octave_n-1):
@@ -84,7 +88,7 @@ def deepdream(net, base_img, end, iter_n=10, octave_n=4, octave_scale=1.4, clip=
 			if not clip: # adjust image contrast if clipping is disabled
 				vis = vis*(255.0/np.percentile(vis, 99.98))
 			ename = '-'.join(end.split('/'))
-			showarray(vis, '{}-{}-{}'.format(ename, octave, i))
+			#showarray(vis, '{}-{}-{}'.format(ename, octave, i))
 			print octave, i, end, vis.shape
 			clear_output(wait=True)
 
@@ -93,22 +97,17 @@ def deepdream(net, base_img, end, iter_n=10, octave_n=4, octave_scale=1.4, clip=
 	# returning the resulting image
 	return deprocess(net, src.data[0])
 
-img = np.float32(PIL.Image.open('img.jpg'))
+def create_image(filename):
+        img = np.float32(PIL.Image.open(filename))
+        
 
 end = 'inception_4c/output'
 if len(sys.argv) >= 2:
 	end = sys.argv[1]
 
-iter_n = 10
 if len(sys.argv) >= 3:
-	iter_n = int(sys.argv[2])
-
-octave_n = 4
-if len(sys.argv) >= 4:
-	octave_n = int(sys.argv[3])
-
-octave_scale = 1.4
-if len(sys.argv) >= 5:
-	octave_scale = float(sys.argv[4])
-
-_=deepdream(net, img, end, iter_n, octave_n, octave_scale)
+        for filename in sys.argv[2:]:
+                create_image(filename)
+                img = np.float32(PIL.Image.open(filename))
+                _=deepdream(net, img, end)
+                showarray(_, os.path.splitext(os.path.basename(filename))[0] + "_dream")
