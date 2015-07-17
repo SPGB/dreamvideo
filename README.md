@@ -4,12 +4,12 @@ A docker image for adding the popular "Deep Dream" effect to videos using Google
 #Usage
 
 ```
-docker --rm -it -v `pwd`images:/images -v [path to video file]:/ddd/video.mp4 natelehman/dreamvideo [desired objective]
+docker run --rm -it -v `pwd`images:/images -v [path to video file]:/ddd/video.mp4 natelehman/dreamvideo [desired objective]
 ```
 ###Example
 
 ```
-docker --rm -it -v `pwd`images:/images -v `pwd`cut.mp4:/ddd/video.mp4 natelehman/dreamvideo 'conv2/3x3_reduce'
+docker run --rm -it -v `pwd`images:/images -v `pwd`cut.mp4:/ddd/video.mp4 natelehman/dreamvideo 'conv2/3x3_reduce'
 ```
 
 
