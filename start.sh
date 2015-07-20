@@ -14,3 +14,4 @@ ipython /ddd/deepdreams.py $1 /images/*
 bash /ddd/frames2movie.sh avconv '/images' video.mp4 'png'
 
 mv images_done.mp4 /images/
+

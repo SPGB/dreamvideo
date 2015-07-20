@@ -9,13 +9,13 @@ if [ "png" == "$4" ]; then
     INFILES="$2/%08d_dream.png"
     MENCODERCOMMAND="type=png"
 else
-    INFILES="$2/%08d.jpg"
+    INFILES="$2/%08d_dream.jpg"
     MENCODERCOMMAND="type=jpg"
 fi
 
 CODEC="libx264"
 OUTFILE="$(basename $2)_done.mp4"
-TMPAUDIO="/tmp/tmp.aac"
+TMPAUDIO="/tmp/tmp.m4a"
 TMPVIDEO="/tmp/tmp.mp4"
 
 if [ -f ${OUTFILE} ]; then
@@ -28,10 +28,10 @@ if [ "avconv" == "$1" ]; then
     FPS=$($AVCONV -i "$3" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p")
 
     ${AVCONV} -r ${FPS} -i "${INFILES}" -b:v "${BITRATE}" -c:v ${CODEC} -vf "format=yuv420p" -crf 15 "${TMPVIDEO}" -y
-    ${AVCONV} -i "$3" -strict -2 "${TMPAUDIO}" -y
+    ${AVCONV} -i "$3" -vn -acodec copy "${TMPAUDIO}"
 
     if [ -s "${TMPAUDIO}" ]; then
-        ${AVCONV} -i "${TMPAUDIO}" -i "${TMPVIDEO}" -strict -2 -c:v copy -shortest "${OUTFILE}"
+        ${AVCONV} -i "${TMPAUDIO}" -i "${TMPVIDEO}" -acodec copy "${OUTFILE}"
     else
         ${AVCONV}                  -i "${TMPVIDEO}" -strict -2 -c:v copy -shortest "${OUTFILE}"
     fi
@@ -58,14 +58,14 @@ else
     ${FFMPEG} -i "${TMPAUDIO}" -i "${TMPVIDEO}" -strict -2 -c:v copy -movflags faststart -shortest "${OUTFILE}"
 fi
 
-echo "Removing temp files"
-rm "${TMPAUDIO}"
+#echo "Removing temp files"
+#rm "${TMPAUDIO}"
 #echo "${TMPAUDIO} removed"
 #rm /tmp/music.aac
 #echo "/tmp/music.wav removed"
 #rm /tmp/musicshort.aac
 #echo "/tmp/musicshort.wav removed"
-rm "${TMPVIDEO}"
+#rm "${TMPVIDEO}"
 #echo "${TMPVIDEO} removed"
 
 if [ -s ${OUTFILE} ]; then
