@@ -63,6 +63,10 @@ COPY frames2movie.sh /ddd/
 
 RUN mkdir /images
 
+RUN rm -rf /images/*
+RUN mkdir /images/input
+RUN mkdir /images/output
+
 VOLUME /images
 
 ENTRYPOINT ["/ddd/start.sh"]
