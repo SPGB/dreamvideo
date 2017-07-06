@@ -59,6 +59,9 @@ WORKDIR /ddd
 
 COPY start.sh /ddd/
 COPY deepdreams.py /ddd/
+COPY 1_movie2frames.sh /ddd/
+COPY 2_dreaming_time.py /ddd/
+COPY 3_frames2movie.sh /ddd/
 COPY frames2movie.sh /ddd/
 
 RUN mkdir /images
